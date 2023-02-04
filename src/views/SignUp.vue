@@ -35,8 +35,10 @@
 </template>
 
 <script>
+import axios from "axios";
 import Validate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
+import router from "@/router";
 export default {
   name: "signUp",
   data() {
@@ -49,14 +51,32 @@ export default {
   },
   validations() {
     return {
-      name: { required, minLength: minLength(10) },
+      name: { required, minLength: minLength(3) },
       email: { required, email },
       password: { required },
     };
   },
+  mounted() {
+    let user = localStorage.getItem("user-info");
+    if (user) {
+      router.push("/");
+    }
+  },
   methods: {
-    signup() {
+    async signup() {
       this.v$.$validate(); // validations() للبيانات اللي في  validate معناها اعملي
+      if (!this.v$.$error) {
+        let result = await axios.post("http://localhost:3000/users", {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+        });
+        //post 201
+        if (result.status == 201) {
+          localStorage.setItem("user-info", JSON.stringify(result.data));
+          router.push("signin");
+        }
+      }
     },
   },
 };

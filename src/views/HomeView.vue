@@ -16,8 +16,15 @@
 </template>
 
 <script>
+import router from "@/router";
 export default {
   name: "HomeView",
   components: {},
+  mounted() {
+    let user = localStorage.getItem("user-info");
+    if (!user) {
+      router.push("signup");
+    }
+  },
 };
 </script>
