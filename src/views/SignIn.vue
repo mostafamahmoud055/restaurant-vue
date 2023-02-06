@@ -81,7 +81,7 @@ export default {
         //get 200
         if (result.status == 200 && result.data.length > 0) {
           localStorage.setItem("user-info", JSON.stringify(result.data));
-          router.push("/");
+          router.go("/");
         } else {
           this.userNotFound = "User Not Found!";
         }
