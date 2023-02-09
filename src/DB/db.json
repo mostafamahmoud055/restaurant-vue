@@ -5,6 +5,21 @@
       "email": "mostafa@gmail.com",
       "password": "123456",
       "id": 1
+    },
+    {
+      "name": "khalaf",
+      "email": "khalaf@gmail.com",
+      "password": "123456",
+      "id": 2
+    }
+  ],
+  "Locations": [
+    {
+      "name": "Hooks Fish and Chips",
+      "address": "Minneapolis, Minnesota",
+      "phone": "01226549269",
+      "userID": 1,
+      "id": 1
     }
   ]
 }

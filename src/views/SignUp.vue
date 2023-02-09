@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid BG">
+  <div class="container-fluid">
     <form class="w-50 m-auto display-6">
       <div class="mb-3">
         <label for="name" class="form-label">Name</label>
@@ -43,6 +43,7 @@ export default {
   name: "signUp",
   data() {
     return {
+      // data info must be equal to validations info
       v$: Validate(),
       name: "",
       email: "",
@@ -50,6 +51,7 @@ export default {
     };
   },
   validations() {
+    // data info must be equal to validations info
     return {
       name: { required, minLength: minLength(3) },
       email: { required, email },
@@ -74,7 +76,7 @@ export default {
         //post 201
         if (result.status == 201) {
           localStorage.setItem("user-info", JSON.stringify(result.data));
-          router.push("signin");
+          router.push("Signin");
         }
       }
     },
@@ -82,13 +84,6 @@ export default {
 };
 </script>
 <style scope>
-.BG {
-  background-image: url("@/assets/ComingAttraction.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
-}
 label {
   color: #fff;
 }

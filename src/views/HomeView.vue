@@ -1,29 +1,19 @@
 <template>
   <div class="container">
-    <br />
-    <br />
-    <div class="card">
-      <div class="card-header">home</div>
-      <div class="card-body">
-        <h5 class="card-title">Special title treatment</h5>
-        <p class="card-text">
-          With supporting text below as a natural lead-in to additional content.
-        </p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
-      </div>
-    </div>
+    <NewLocation />
   </div>
 </template>
 
 <script>
 import router from "@/router";
+import NewLocation from "@/components/NewLocation.vue";
 export default {
   name: "HomeView",
-  components: {},
+  components: { NewLocation },
   mounted() {
     let user = localStorage.getItem("user-info");
     if (!user) {
-      router.push("signup");
+      router.push("Signup");
     }
   },
 };

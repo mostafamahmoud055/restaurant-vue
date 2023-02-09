@@ -1,6 +1,17 @@
-<template class="BG">
-  <div class="container-fluid BG">
-    <form class="w-50 m-auto display-6">
+<template>
+  <div class="container-fluid">
+    <form
+      class="w-50 m-auto display-6"
+      style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #2d2723a6;
+        padding: 70px 40px;
+        border-radius: 10px;
+      "
+    >
       <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Email</label>
         <input
@@ -91,28 +102,12 @@ export default {
 };
 </script>
 <style scope>
-.BG {
-  background-image: url("@/assets/ComingAttraction.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
-}
 label {
   color: #fff;
 }
 button {
   background-color: #ff5b4b !important;
   border-color: #ff5b4b !important;
-}
-form {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #2d2723a6;
-  padding: 70px 40px;
-  border-radius: 10px;
 }
 .form-control:focus {
   border-color: #000 !important;
