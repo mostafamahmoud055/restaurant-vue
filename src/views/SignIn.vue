@@ -92,7 +92,7 @@ export default {
         //get 200
         if (result.status == 200 && result.data.length > 0) {
           localStorage.setItem("user-info", JSON.stringify(result.data));
-          router.go("/");
+          router.push("/");
         } else {
           this.userNotFound = "User Not Found!";
         }
@@ -105,10 +105,7 @@ export default {
 label {
   color: #fff;
 }
-button {
-  background-color: #ff5b4b !important;
-  border-color: #ff5b4b !important;
-}
+
 .form-control:focus {
   border-color: #000 !important;
   box-shadow: none !important;

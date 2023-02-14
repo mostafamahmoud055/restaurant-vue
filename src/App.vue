@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:class="{ mainDiv: userDataInfo, BG: !userDataInfo }">
+  <div class="parent">
     <navbarComp />
     <br />
     <router-view />
@@ -7,11 +7,12 @@
 </template>
 <script>
 import navbarComp from "@/components/navbarComp.vue";
+import store from "@/store/index.js";
 export default {
-  computed: {
-    userDataInfo() {
-      return localStorage.getItem("user-info");
-    },
+  mounted() {
+    let user = localStorage.getItem("user-info");
+    let userID = JSON.parse(user)[0]["id"];
+    store.commit("listOfLocations", { userID: userID });
   },
   components: {
     navbarComp,
@@ -22,19 +23,14 @@ export default {
 #app {
   position: relative;
 }
-.mainDiv {
-  height: 100vh;
+.parent {
+  font-family: cursive;
+  min-height: 100vh;
   background-image: url("@/assets/headimg.jpg");
-  background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  background-attachment: fixed;
 }
-.BG {
-  background-image: url("@/assets/ComingAttraction.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
+input {
+  opacity: 0.8;
 }
 </style>

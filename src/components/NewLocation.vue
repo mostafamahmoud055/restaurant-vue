@@ -23,7 +23,7 @@
             ></button>
           </div>
           <div class="modal-body">
-            <form @click.prevent>
+            <form>
               <div class="mb-3">
                 <label for="RestaurantName" class="form-label">Name</label>
                 <input
@@ -62,10 +62,23 @@
               <div class="error-feedback text-danger" v-if="addressError">
                 {{ addressError }}
               </div>
+              <div class="mb-3">
+                <label for="RestaurantPhoto" class="form-label">Photo</label>
+                <input
+                  type="file"
+                  class="form-control"
+                  id="RestaurantPhoto"
+                  @change="previewFiles"
+                />
+              </div>
+              <div class="error-feedback text-danger" v-if="photoError">
+                {{ photoError }}
+              </div>
             </form>
           </div>
           <div class="modal-footer">
             <button
+              id="closeModalRestaurant"
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
@@ -85,6 +98,7 @@
 <script>
 import axios from "axios";
 import $ from "jquery";
+import store from "@/store/index.js";
 export default {
   name: "NewLocation",
   data() {
@@ -93,10 +107,11 @@ export default {
       rName: "",
       rAddress: "",
       rPhone: "",
+      rPhoto: "",
       nameError: "",
       addressError: "",
       phoneError: "",
-      userLoggedId: localStorage.getItem("user-info"),
+      photoError: "",
     };
   },
   methods: {
@@ -107,10 +122,13 @@ export default {
       $("#RestaurantName").val("");
       $("#RestaurantAddress").val("");
       $("#RestaurantPhone").val("");
+      $("#RestaurantPhoto").val("");
     },
     async add() {
       this.nameError = "";
       this.addressError = "";
+      this.photoError = "";
+      this.phoneError = "";
       if ($("#RestaurantName").val().length < 3) {
         this.nameError = "This field should be at least 3 characters long";
       }
@@ -120,26 +138,53 @@ export default {
       if ($("#RestaurantPhone").val().length < 10) {
         this.phoneError = "This field should be at least 10 characters long";
       }
+      if (!Number.isInteger($("#RestaurantPhone").val())) {
+        this.phoneError = "This field should be a number";
+      }
+      if (this.rPhoto == "") {
+        this.photoError = "Image is required";
+      }
       setTimeout(() => {
         this.nameError = "";
         this.addressError = "";
         this.phoneError = "";
+        this.photoError = "";
       }, 3000);
-      if (this.nameError || this.addressError || this.phoneError) {
+      if (
+        this.nameError ||
+        this.addressError ||
+        this.phoneError ||
+        this.photoError
+      ) {
         return;
       } else {
         let result = await axios.post(`http://localhost:3000/Locations`, {
           name: this.rName,
           address: this.rAddress,
           phone: this.rPhone,
-          userID: this.userLoggedId,
+          photo: this.rPhoto,
+          userID: JSON.parse(localStorage.getItem("user-info"))[0].id,
         });
         //post 201
         if (result.status == 201) {
+          this.retrieveLocations();
           this.clearData();
-          $(".modal").removeClass("show");
+          $("#closeModalRestaurant").click();
         }
       }
+    },
+    async retrieveLocations() {
+      let user = localStorage.getItem("user-info");
+      let userID = JSON.parse(user)[0]["id"];
+      store.commit("listOfLocations", { userID: userID });
+    },
+    previewFiles(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.addEventListener("load", () => {
+        this.rPhoto = reader.result;
+      });
     },
   },
 };

@@ -24,6 +24,18 @@ const routes = [
 
     component: () => import("../views/SignUp.vue"),
   },
+  {
+    path: "/update/:id",
+    name: "Update",
+
+    component: () => import("../views/restaurantUpdate.vue"),
+  },
+  {
+    path: "/menu/:id",
+    name: "Menu",
+
+    component: () => import("../views/MenuView.vue"),
+  },
 ];
 
 const router = createRouter({

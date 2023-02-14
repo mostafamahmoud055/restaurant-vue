@@ -56,11 +56,14 @@
               class="nav-link"
               data-bs-toggle="modal"
               data-bs-target="#modalProfile"
-              >My Profile</a
+              ><font-awesome-icon icon="fa-solid fa-user-tie" /> Profile</a
             >
           </li>
           <li class="nav-item" v-if="user">
-            <a class="nav-link" v-on:click="logout">Logout</a>
+            <a class="nav-link" v-on:click="logout">
+              <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
+              Logout</a
+            >
           </li>
           <!-- Button trigger modal -->
         </ul>
@@ -198,6 +201,7 @@ export default {
       localStorage.clear();
       this.user = null;
       router.push("Signin");
+      $(".parent").css("height", "100vh ");
     },
     userInfo() {
       let user = localStorage.getItem("user-info");
@@ -209,7 +213,7 @@ export default {
         this.userID = this.user["id"];
         $(".Show-Password").prop("checked", false);
         $("#password").prop("type", "password");
-        $(".modal").removeClass("show");
+        $(".closeModal").click();
       }
     },
     async update() {
@@ -226,6 +230,7 @@ export default {
 
         //put 200
         if (result.status == 200 || result.data.length > 0) {
+          $("#closeModal").click();
           localStorage["user-info"] = JSON.stringify([result.data]);
           this.userInfo();
         }
@@ -246,19 +251,30 @@ nav {
   cursor: pointer;
   color: #bdbbbb !important;
 }
+.nav-link:hover {
+  cursor: pointer;
+  color: #fff !important;
+}
 .router-link-exact-active {
+  color: #ff5b4b !important;
+}
+.router-link-exact-active:hover {
   color: #ff5b4b !important;
 }
 .modal-backdrop {
   z-index: -1 !important;
 }
 .modal-content {
-  background-color: #2d2723a6 !important;
+  background-color: #2d2723e8 !important;
   color: #fff !important;
 }
 button {
   background-color: #ff5b4b73 !important;
   border-color: transparent !important;
+}
+#NewRestaurant:hover,
+button:hover {
+  background-color: #ff5b4b !important;
 }
 body {
   padding-right: 0 !important;

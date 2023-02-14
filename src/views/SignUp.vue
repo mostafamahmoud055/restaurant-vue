@@ -75,8 +75,7 @@ export default {
         });
         //post 201
         if (result.status == 201) {
-          localStorage.setItem("user-info", JSON.stringify(result.data));
-          router.push("Signin");
+          router.push("/Signin");
         }
       }
     },
@@ -86,10 +85,6 @@ export default {
 <style scope>
 label {
   color: #fff;
-}
-button {
-  background-color: #ff5b4b !important;
-  border-color: #ff5b4b !important;
 }
 form {
   position: absolute;
