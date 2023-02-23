@@ -10,7 +10,11 @@
         data-bs-toggle="collapse"
         data-bs-target="#navbarSupportedContent"
       >
-        <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul
@@ -290,5 +294,18 @@ body {
 }
 .form-check-input {
   box-shadow: none !important;
+}
+
+.navbar-toggler-icon {
+  background-image: none !important;
+  vertical-align: unset !important;
+  line-height: 0.2 !important;
+  height: 1.8em !important;
+}
+.navbar-toggler-icon span {
+  background-color: #fff;
+  height: 2px;
+  width: 100%;
+  display: inline-block;
 }
 </style>

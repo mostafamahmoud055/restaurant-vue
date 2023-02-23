@@ -30,7 +30,28 @@ export default {
   background-size: cover;
   background-position: center center;
 }
+
 input {
   opacity: 0.8;
+}
+/* Change scroll chrom style */
+body::-webkit-scrollbar {
+  width: 9px;
+  height: 7px;
+}
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  /* border-radius: 10px; */
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #ff5b4b;
+  border-radius: 10px;
+}
+
+*::selection {
+  background-color: #ff5b4b;
+  color: #fff;
 }
 </style>

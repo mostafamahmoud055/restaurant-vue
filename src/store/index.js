@@ -4,7 +4,13 @@ import router from "@/router";
 export default createStore({
   state: {
     home: true,
+    category: {
+      id: "",
+      name: "",
+    },
+    categoryImages: {},
     listOfLocations: [],
+    listOfCategories: [],
   },
   getters: {
     home(state) {
@@ -22,6 +28,19 @@ export default createStore({
       //get 200
       if (result.status == 200) {
         state.listOfLocations = result.data;
+      }
+    },
+    async listOfCategories(state, payload) {
+      let result = await axios.get(
+        `http://localhost:3000/categories?userID=${payload.userID}&locationID=${payload.locationID}`
+      );
+      //get 200
+      if (result.status == 200) {
+        state.listOfCategories = result.data;
+        state.categoryImages = {};
+        result.data.forEach((cate, i) => {
+          state.categoryImages[`${i}`] = cate.photo;
+        });
       }
     },
     async middlewareLocations(state, payload) {

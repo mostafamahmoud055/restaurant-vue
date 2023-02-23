@@ -138,7 +138,7 @@ export default {
       if ($("#RestaurantPhone").val().length < 10) {
         this.phoneError = "This field should be at least 10 characters long";
       }
-      if (!Number.isInteger($("#RestaurantPhone").val())) {
+      if (!Number.isInteger(+$("#RestaurantPhone").val())) {
         this.phoneError = "This field should be a number";
       }
       if (this.rPhoto == "") {
