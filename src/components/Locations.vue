@@ -65,7 +65,7 @@
         ><br />
         <br />
         <div class="row justify-content-around">
-          <a href="#" class="col-lg-3 col-12 btn btn-primary mt-1 p-x-1 View"
+          <a class="col-lg-3 col-12 btn btn-primary mt-1 p-x-1 View"
             ><router-link
               class="nav-link"
               style="color: #fff !important"
@@ -73,7 +73,7 @@
               >Menu</router-link
             ></a
           >
-          <a href="#" class="col-lg-3 col-12 btn btn-primary mt-1 p-x-1 Update"
+          <a class="col-lg-3 col-12 btn btn-primary mt-1 p-x-1 Update"
             ><router-link
               class="nav-link"
               style="color: #fff !important"
@@ -82,7 +82,6 @@
             ></a
           >
           <a
-            href="#"
             class="col-lg-3 col-12 btn btn-primary mt-1 p-x-1 Delete"
             type="button"
             data-bs-toggle="modal"
@@ -106,6 +105,9 @@ export default {
     return {
       deletedID: "",
       deletedName: "",
+      catIdLength: [],
+      itemsLength: [],
+      itemsIdLength: [],
     };
   },
   name: "LocationsView",
@@ -122,16 +124,54 @@ export default {
         .text();
     },
     async deleteCard() {
-      let result = await axios.delete(
+      let result = await axios.get(
+        `http://localhost:3000/categories?locationID=${this.deletedID}`
+      );
+      if (result.status == 200) {
+        for (let index = 0; index < result.data.length; index++) {
+          this.catIdLength.push(result.data[index].id);
+        }
+        console.log(this.catIdLength);
+        for (let index = 0; index < this.catIdLength.length; index++) {
+          let itemResults = await axios.get(
+            `http://localhost:3000/items?catId=${this.catIdLength[index]}`
+          );
+          this.itemsLength.push(itemResults.data);
+        }
+        console.log(this.itemsLength);
+
+        console.log("/------------------/");
+        for (let indexOUT = 0; indexOUT < this.itemsLength.length; indexOUT++) {
+          for (
+            let indexIN = 0;
+            indexIN < this.itemsLength[indexOUT].length;
+            indexIN++
+          ) {
+            this.itemsIdLength.push(this.itemsLength[indexOUT][indexIN].id);
+          }
+        }
+        console.log(this.itemsIdLength);
+      }
+
+      let resultLOC = await axios.delete(
         `http://localhost:3000/Locations/${this.deletedID}`
       );
-      //delete 200
-      if (result.status == 200) {
-        $("#closeModalDelete").click();
-        let user = localStorage.getItem("user-info");
-        let userID = JSON.parse(user)[0]["id"];
-        store.commit("listOfLocations", { userID: userID });
+      if (resultLOC.status == 200) {
+        for (let index = 0; index < this.catIdLength.length; index++) {
+          await axios.delete(
+            `http://localhost:3000/categories/${this.catIdLength[index]}`
+          );
+        }
+        for (let index = 0; index < this.itemsIdLength.length; index++) {
+          await axios.delete(
+            `http://localhost:3000/items/${this.itemsIdLength[index]}`
+          );
+        }
       }
+      $("#closeModalDelete").click();
+      let user = localStorage.getItem("user-info");
+      let userID = JSON.parse(user)[0]["id"];
+      store.commit("listOfLocations", { userID: userID });
     },
   },
 };

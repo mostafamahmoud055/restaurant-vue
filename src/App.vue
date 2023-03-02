@@ -42,7 +42,6 @@ body::-webkit-scrollbar {
 
 body::-webkit-scrollbar-track {
   box-shadow: inset 0 0 5px grey;
-  /* border-radius: 10px; */
 }
 
 body::-webkit-scrollbar-thumb {

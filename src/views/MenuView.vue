@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container scroll">
     <DeleteCategory />
     <addItems :catId="CAToF" />
     <!-- Button trigger modal -->
@@ -124,9 +124,6 @@
                   v-model="name"
                 />
               </div>
-              <div class="error-feedback text-danger" v-if="v$.name.$error">
-                {{ v$.name.$errors[0].$message }}
-              </div>
               <div class="mb-3">
                 <label for="formFile" class="form-label">Photo</label>
                 <input
@@ -183,7 +180,6 @@
             class="pagedetails"
           />
         </div>
-
         <div class="flip-book">
           <div
             class="flip"
@@ -200,15 +196,18 @@
               <label
                 :for="`c${category.id}`"
                 class="back-btn"
-                @click="flip_back(category.id)"
+                @click="flip_back(listOfCategoriesLength[index], category.id)"
                 >Before</label
               >
             </div>
             <div class="front">
-              <div class="d-flex justify-content-between align-items-center">
-                <h2 style="visibility: hidden">{{ category.name }}</h2>
+              <div
+                class="d-flex justify-content-between align-items-center flex-md-row flex-column mb-3"
+              >
+                <!-- <h2 style="visibility: hidden">{{ category.name }}</h2> -->
                 <h2 style="flex: 1">{{ category.name }}</h2>
                 <label
+                  class="additem"
                   data-bs-toggle="modal"
                   data-bs-target="#addItems"
                   style="text-align: end"
@@ -217,12 +216,7 @@
                   >Add Items</label
                 >
               </div>
-              <p>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                Possimus sunt consectetur iusto sint architecto beatae fuga,
-                quasi, repellendus tempora cum eaque? Incidunt modi laudantium
-                fugit nostrum ipsam consectetur. Illum, dolorum!
-              </p>
+              <allItems />
               <div class="d-flex justify-content-between">
                 <label
                   class="next-btn"
@@ -244,7 +238,9 @@
                   v-if="index + 1 != listOfCategories.length"
                   :for="`c${category.id}`"
                   class="next-btn"
-                  @click="flip_next(category.id)"
+                  @click="
+                    flip_next(listOfCategoriesLength[index + 1], category.id)
+                  "
                   >NEXT</label
                 >
                 <label v-else class="next-btn">Last page</label>
@@ -260,22 +256,21 @@
   </div>
 </template>
 <script>
+import allItems from "@/components/allItems.vue";
 import DeleteCategory from "@/components/DeleteCategory.vue";
 import addItems from "@/components/addItems.vue";
 import router from "@/router";
 import store from "@/store/index.js";
 import axios from "axios";
 import $ from "jquery";
-import Validate from "@vuelidate/core";
-import { required, minLength, maxLength } from "@vuelidate/validators";
 export default {
   name: "main-menu",
-  components: { DeleteCategory, addItems },
+  components: { DeleteCategory, addItems, allItems },
   data() {
     return {
-      v$: Validate(),
       locationName: "",
       name: "",
+      nameError: "",
       srcPhoto: "",
       uID: "",
       uName: "",
@@ -288,12 +283,6 @@ export default {
       photoError: "",
       currentNext: 0,
       currentPrev: 2,
-    };
-  },
-  validations() {
-    // data info must be equal to validations info
-    return {
-      name: { required, minLength: minLength(3), maxLength: maxLength(10) },
     };
   },
   async mounted() {
@@ -337,17 +326,13 @@ export default {
       $('input[type="checkbox"]').prop("checked", false);
       setTimeout(() => {
         var num = store.state.listOfCategories.length;
-        for (
-          let index = 0;
-          index < store.state.listOfCategories.length;
-          index++
-        ) {
-          $(`#p${index + 1}`).css({
+        $(".flip").each(function () {
+          $(this).css({
             "z-index": num,
             transform: "rotateY(0deg)",
           });
           num--;
-        }
+        });
       }, 0);
     },
     delete_cate(id, name) {
@@ -359,7 +344,7 @@ export default {
       this.uName = name;
       this.uSrcPhoto = srcPhoto;
     },
-    flip_next(num) {
+    flip_next(id, num) {
       this.currentNext++;
       setTimeout(() => {
         if ($(`#c${num}`).is(":checked")) {
@@ -369,8 +354,11 @@ export default {
           });
         }
       }, 0);
+      setTimeout(() => {
+        store.state.itemsOfCategoriesID = id;
+      }, 50);
     },
-    flip_back(num) {
+    flip_back(id, num) {
       this.currentPrev++;
       setTimeout(() => {
         if (!$(`#c${num}`).is(":checked")) {
@@ -381,6 +369,9 @@ export default {
             .css({ transform: "rotateY(0deg)", "z-index": this.currentPrev });
         }
       }, 100);
+      setTimeout(() => {
+        store.state.itemsOfCategoriesID = id;
+      }, 310);
     },
     async updateCate() {
       let filterCatName = store.state.listOfCategories.filter(
@@ -442,7 +433,6 @@ export default {
         }, 1500);
         return;
       }
-      this.v$.$validate();
       if (this.srcPhoto == "") {
         this.photoError = "Image is required";
         setTimeout(() => {
@@ -450,21 +440,26 @@ export default {
         }, 1500);
         return;
       }
-      if (!this.v$.$error) {
-        let result = await axios.post(`http://localhost:3000/categories`, {
-          name: this.name,
+      if (this.name == "") {
+        this.photoError = "Image is required";
+        setTimeout(() => {
+          this.photoError = "";
+        }, 1500);
+        return;
+      }
+      let result = await axios.post(`http://localhost:3000/categories`, {
+        name: this.name,
+        userID: this.userID,
+        locationID: this.locationID,
+        photo: this.srcPhoto,
+      });
+      $("#closeCate").click();
+      //post 201
+      if (result.status == 201) {
+        store.commit("listOfCategories", {
           userID: this.userID,
           locationID: this.locationID,
-          photo: this.srcPhoto,
         });
-        $("#closeCate").click();
-        //post 201
-        if (result.status == 201) {
-          store.commit("listOfCategories", {
-            userID: this.userID,
-            locationID: this.locationID,
-          });
-        }
       }
     },
     previewFiles(event) {
@@ -487,6 +482,9 @@ export default {
   computed: {
     listOfCategories() {
       return store.state.listOfCategories;
+    },
+    listOfCategoriesLength() {
+      return store.state.listOfCategoriesLength;
     },
     listOfImages() {
       this.z_index();
@@ -527,13 +525,13 @@ input[type="checkbox"] {
 
 #cover {
   width: 250px;
-  height: 400px;
+  height: 500px;
   flex: 1;
 }
 
 .flip-book {
   width: 250px;
-  height: 400px;
+  height: 500px;
   position: relative;
   perspective: 1500px;
   flex: 1;
@@ -583,7 +581,7 @@ p {
 
 .next-btn {
   cursor: pointer;
-  color: #000;
+  color: #000 !important;
 }
 
 .back-btn {
@@ -592,5 +590,28 @@ p {
   right: 13px;
   cursor: pointer;
   color: #fff;
+}
+.scroll {
+  overflow: hidden;
+}
+.front {
+  overflow-y: scroll;
+}
+/* Change scroll chrom style */
+.front::-webkit-scrollbar {
+  width: 9px;
+  height: 7px;
+}
+
+.front::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+}
+
+.front::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 10px;
+}
+.additems {
+  color: #000 !important;
 }
 </style>

@@ -51,20 +51,38 @@ import axios from "axios";
 import $ from "jquery";
 export default {
   name: "DeleteCategory",
+  data() {
+    return {
+      allItemsID: [],
+    };
+  },
   methods: {
     categoryInfo() {
       return store.state.category;
     },
     async deleteCate(id) {
       let result = await axios.delete(`http://localhost:3000/categories/${id}`);
-      //delete 200
+      // delete 200;
       if (result.status == 200) {
-        $("#closeCategoryDelete").click();
-        store.commit("listOfCategories", {
-          userID: JSON.parse(localStorage.getItem("user-info"))[0]["id"],
-          locationID: this.$route.params.id,
-        });
+        let res = await axios.get(`http://localhost:3000/items?catId=${id}`);
+        if (res.status == 200) {
+          for (let index = 0; index < res.data.length; index++) {
+            this.allItemsID.push(res.data[index].id);
+          }
+        }
+
+        for (let index = 0; index < this.allItemsID.length; index++) {
+          await axios.delete(
+            `http://localhost:3000/items/${this.allItemsID[index]}`
+          );
+        }
       }
+
+      store.commit("listOfCategories", {
+        userID: JSON.parse(localStorage.getItem("user-info"))[0]["id"],
+        locationID: this.$route.params.id,
+      });
+      $("#closeCategoryDelete").click();
     },
   },
 };

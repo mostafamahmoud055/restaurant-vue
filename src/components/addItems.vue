@@ -18,22 +18,28 @@
             aria-label="Close"
           ></button>
         </div>
-        <div class="mx-3 my-3">
-          <label for="exampleFormControlInput1" class="form-label">Name</label>
-          <input
-            type="text"
-            class="form-control"
-            v-model="itemName"
-            id="exampleFormControlInput1"
-          />
-          <div class="mt-3 error-feedback text-danger" v-if="itemNameError">
-            {{ itemNameError }}
+
+        <div class="d-flex mt-3">
+          <div class="mx-3">
+            <label for="exampleFormControlInput1" class="form-label"
+              >Name</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              v-model="itemName"
+              id="itemName"
+            />
+            <div
+              class="mt-3 error-feedback text-danger"
+              v-if="v$.itemName.$error"
+            >
+              {{ v$.itemName.$errors[0].$message }}
+            </div>
+            <div class="mt-3 error-feedback text-danger" v-if="errorMessage">
+              {{ errorMessage }}
+            </div>
           </div>
-          <div class="mt-3 error-feedback text-danger" v-if="errorMessage">
-            {{ errorMessage }}
-          </div>
-        </div>
-        <div class="d-flex">
           <div class="mx-3 mb-3">
             <label for="exampleFormControlInput1" class="form-label"
               >Price</label
@@ -42,28 +48,16 @@
               type="text"
               class="form-control"
               v-model="itemPrice"
-              id="exampleFormControlInput1"
+              id="itemPrice"
             />
             <div class="mt-3 error-feedback text-danger" v-if="itemPriceError">
               {{ itemPriceError }}
             </div>
           </div>
-          <div class="mx-3 mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Qty</label>
-            <input
-              type="text"
-              class="form-control"
-              v-model="itemQty"
-              id="exampleFormControlInput1"
-            />
-            <div class="mt-3 error-feedback text-danger" v-if="itemQtyError">
-              {{ itemQtyError }}
-            </div>
-          </div>
         </div>
         <div class="mx-3 mb-3">
           <label for="exampleFormControlInput1" class="form-label"
-            >Descriptiom</label
+            >Description</label
           >
           <input
             type="text"
@@ -71,8 +65,11 @@
             v-model="itemDesc"
             id="exampleFormControlInput1"
           />
-          <div class="mt-3 error-feedback text-danger" v-if="itemDescError">
-            {{ itemDescError }}
+          <div
+            class="mt-3 error-feedback text-danger"
+            v-if="v$.itemDesc.$error"
+          >
+            {{ v$.itemDesc.$errors[0].$message }}
           </div>
         </div>
 
@@ -88,9 +85,9 @@
           <button
             type="button"
             class="btn btn-primary"
-            @click="addItem(categoryInfo().id)"
+            @click="addItem(idOfCat.id)"
           >
-            Delete
+            Add
           </button>
         </div>
       </div>
@@ -101,37 +98,81 @@
 <script>
 import store from "@/store/index.js";
 import axios from "axios";
+import Validate from "@vuelidate/core";
+import { required, minLength, maxLength } from "@vuelidate/validators";
 import $ from "jquery";
 export default {
   name: "addItems",
   props: ["catId"],
   data() {
     return {
+      v$: Validate(),
       itemName: "",
       itemDesc: "",
-      itemPrice: "",
-      itemQty: "",
+      itemPriceError: "",
+      errorMessage: "",
+      userID: JSON.parse(localStorage.getItem("user-info"))[0]["id"],
+    };
+  },
+  validations() {
+    // data info must be equal to validations info
+    return {
+      itemName: { required, minLength: minLength(5), maxLength: maxLength(30) },
+      itemDesc: {
+        required,
+        minLength: minLength(10),
+        maxLength: maxLength(70),
+      },
     };
   },
   computed: {
     idOfCat() {
-      console.log(this.catId);
       return this.catId;
     },
   },
   methods: {
-    categoryInfo() {
-      return store.state.category;
-    },
     async addItem(id) {
-      let result = await axios.delete(`http://localhost:3000/categories/${id}`);
-      //delete 200
-      if (result.status == 200) {
-        $("#closeAddItems").click();
-        store.commit("listOfCategories", {
-          userID: JSON.parse(localStorage.getItem("user-info"))[0]["id"],
-          locationID: this.$route.params.id,
+      this.v$.$validate();
+      let result = await axios.get(
+        `http://localhost:3000/items?userId=${this.userID}&catId=${id}`
+      );
+      //get 200
+      if (result.status == 200 && result.data.length > 0) {
+        let filterItemName = result.data.filter(
+          (item) => item.name == this.itemName
+        );
+        if (filterItemName.length > 0) {
+          this.errorMessage = "Category Name already Exist ";
+          setTimeout(() => {
+            this.errorMessage = "";
+          }, 2500);
+          return;
+        }
+      }
+      if (isNaN(+this.itemPrice)) {
+        this.itemPriceError = "This field should be a number";
+        return;
+      }
+      if (!this.v$.$error) {
+        let result = await axios.post(`http://localhost:3000/items`, {
+          name: this.itemName,
+          price: this.itemPrice + " EGP",
+          description: this.itemDesc,
+          userID: this.userID,
+          locID: this.$route.params.id,
+          catId: id,
         });
+        //post 201
+        if (result.status == 201) {
+          $("#closeAddItems").click();
+          $("#itemName").val("");
+          $("#itemDesc").val("");
+          $("#itemPrice").val("");
+          store.commit("listOfCategories", {
+            userID: this.userID,
+            locationID: this.$route.params.id,
+          });
+        }
       }
     },
   },

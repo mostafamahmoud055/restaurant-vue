@@ -11,6 +11,9 @@ export default createStore({
     categoryImages: {},
     listOfLocations: [],
     listOfCategories: [],
+    listOfCategoriesLength: [],
+    itemsOfCategories: [],
+    itemsOfCategoriesID: "",
   },
   getters: {
     home(state) {
@@ -31,6 +34,8 @@ export default createStore({
       }
     },
     async listOfCategories(state, payload) {
+      state.itemsOfCategories = [];
+      state.itemsOfCategoriesID = "";
       let result = await axios.get(
         `http://localhost:3000/categories?userID=${payload.userID}&locationID=${payload.locationID}`
       );
@@ -40,6 +45,16 @@ export default createStore({
         state.categoryImages = {};
         result.data.forEach((cate, i) => {
           state.categoryImages[`${i}`] = cate.photo;
+          state.listOfCategoriesLength[`${i}`] = cate.id;
+        });
+      }
+      let res = await axios.get(
+        `http://localhost:3000/items?userID=${payload.userID}&locID=${payload.locationID}`
+      );
+      //get 200
+      if (res.status == 200 && res.data.length > 0) {
+        res.data.forEach((item, i) => {
+          state.itemsOfCategories[`${i}`] = item;
         });
       }
     },
