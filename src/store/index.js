@@ -3,6 +3,7 @@ import axios from "axios";
 import router from "@/router";
 export default createStore({
   state: {
+    user: localStorage.getItem("user-info"),
     home: true,
     category: {
       id: "",

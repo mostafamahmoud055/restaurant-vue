@@ -56,14 +56,12 @@
           </div>
         </div>
         <div class="mx-3 mb-3">
-          <label for="exampleFormControlInput1" class="form-label"
-            >Description</label
-          >
+          <label for="itemDesc" class="form-label">Description</label>
           <input
             type="text"
             class="form-control"
+            id="itemDesc"
             v-model="itemDesc"
-            id="exampleFormControlInput1"
           />
           <div
             class="mt-3 error-feedback text-danger"
@@ -164,10 +162,10 @@ export default {
         });
         //post 201
         if (result.status == 201) {
-          $("#closeAddItems").click();
           $("#itemName").val("");
           $("#itemDesc").val("");
           $("#itemPrice").val("");
+          $("#closeAddItems").click();
           store.commit("listOfCategories", {
             userID: this.userID,
             locationID: this.$route.params.id,

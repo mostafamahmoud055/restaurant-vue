@@ -14,7 +14,6 @@
           class="btn btn-primary float-start"
           data-bs-toggle="modal"
           data-bs-target="#addCategory"
-          v-if="this.listOfCategories.length > 0"
         >
           Add New Page
         </button>
@@ -292,7 +291,7 @@ export default {
     });
     let user = localStorage.getItem("user-info");
     if (!user) {
-      router.push("Signup");
+      router.push("/Signup");
     }
     let userid = JSON.parse(user)[0]["id"];
     store.commit("middlewareLocations", {
@@ -611,7 +610,7 @@ p {
   background: grey;
   border-radius: 10px;
 }
-.additems {
+.additem {
   color: #000 !important;
 }
 </style>

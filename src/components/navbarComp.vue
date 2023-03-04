@@ -19,7 +19,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul
           class="navbar-nav align-items-baseline fs-4 me-auto mb-2 mb-lg-0"
-          v-if="user"
+          v-if="userDetails"
         >
           <li class="nav-item">
             <router-link
@@ -49,13 +49,13 @@
           </li>
         </ul>
         <ul class="navbar-nav fs-4 ms-auto mb-2 mb-lg-0">
-          <li class="nav-item" v-if="user == null">
+          <li class="nav-item" v-if="userDetails == null">
             <router-link class="nav-link" to="/signin">Sign in</router-link>
           </li>
-          <li class="nav-item" v-if="user == null">
+          <li class="nav-item" v-if="userDetails == null">
             <router-link class="nav-link" to="/signup">Sign up</router-link>
           </li>
-          <li class="nav-item" v-if="user">
+          <li class="nav-item" v-if="userDetails">
             <a
               class="nav-link"
               data-bs-toggle="modal"
@@ -63,7 +63,7 @@
               ><font-awesome-icon icon="fa-solid fa-user-tie" /> Profile</a
             >
           </li>
-          <li class="nav-item" v-if="user">
+          <li class="nav-item" v-if="userDetails">
             <a class="nav-link" v-on:click="logout">
               <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
               Logout</a
@@ -132,17 +132,6 @@
             <div class="error-feedback text-danger" v-if="v$.password.$error">
               {{ v$.password.$errors[0].$message }}
             </div>
-            <div class="mb-3 form-check">
-              <input
-                type="checkbox"
-                class="form-check-input Show-Password"
-                id="exampleCheck1"
-                @change="showPassword"
-              />
-              <label class="form-check-label" for="exampleCheck1"
-                >Show Password</label
-              >
-            </div>
           </form>
         </div>
         <div class="modal-footer">
@@ -165,6 +154,7 @@
 </template>
 <script>
 import axios from "axios";
+import store from "@/store";
 import $ from "jquery";
 import router from "@/router";
 import useValidate from "@vuelidate/core";
@@ -190,21 +180,20 @@ export default {
       password: { required },
     };
   },
+
   mounted() {
     this.userInfo();
   },
-  methods: {
-    showPassword() {
-      if ($(".Show-Password").prop("checked")) {
-        $("#password").prop("type", "text");
-      } else {
-        $("#password").prop("type", "password");
-      }
+  computed: {
+    userDetails() {
+      return store.state.user;
     },
+  },
+  methods: {
     logout() {
       localStorage.clear();
-      this.user = null;
-      router.push("Signin");
+      store.state.user = null;
+      router.push("/Signin");
       $(".parent").css("height", "100vh ");
     },
     userInfo() {
@@ -215,8 +204,6 @@ export default {
         this.email = this.user["email"];
         this.password = this.user["password"];
         this.userID = this.user["id"];
-        $(".Show-Password").prop("checked", false);
-        $("#password").prop("type", "password");
         $(".closeModal").click();
       }
     },

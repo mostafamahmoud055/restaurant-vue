@@ -28,10 +28,12 @@ export default {
   async mounted() {
     let user = localStorage.getItem("user-info");
     if (!user) {
-      router.push("Signup");
+      router.push("/Signup");
     }
-    let userID = JSON.parse(user)[0]["id"];
-    store.commit("listOfLocations", { userID: userID });
+    if (user) {
+      let userID = JSON.parse(user)[0]["id"];
+      store.commit("listOfLocations", { userID: userID });
+    }
   },
   computed: {
     listOfLocations() {

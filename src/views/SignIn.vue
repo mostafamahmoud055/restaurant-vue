@@ -48,6 +48,7 @@
 
 <script>
 import $ from "jquery";
+import store from "@/store";
 import router from "@/router";
 import axios from "axios";
 import Validate from "@vuelidate/core";
@@ -92,6 +93,7 @@ export default {
         //get 200
         if (result.status == 200 && result.data.length > 0) {
           localStorage.setItem("user-info", JSON.stringify(result.data));
+          store.state.user = localStorage.getItem("user-info");
           router.push("/");
         } else {
           this.userNotFound = "User Not Found!";

@@ -1,5 +1,5 @@
 <template>
-  <div class="parent">
+  <div class="parent" @load="mainData">
     <navbarComp />
     <br />
     <router-view />
@@ -9,10 +9,13 @@
 import navbarComp from "@/components/navbarComp.vue";
 import store from "@/store/index.js";
 export default {
-  mounted() {
-    let user = localStorage.getItem("user-info");
-    let userID = JSON.parse(user)[0]["id"];
-    store.commit("listOfLocations", { userID: userID });
+  computed: {
+    mainData() {
+      let user = localStorage.getItem("user-info");
+      let userID = JSON.parse(user)[0]["id"];
+      store.commit("listOfLocations", { userID: userID });
+      return true;
+    },
   },
   components: {
     navbarComp,
