@@ -200,49 +200,57 @@
               >
             </div>
             <div class="front">
-              <div
-                class="d-flex justify-content-between align-items-center flex-md-row flex-column mb-3"
-              >
-                <!-- <h2 style="visibility: hidden">{{ category.name }}</h2> -->
-                <h2 style="flex: 1">{{ category.name }}</h2>
-                <label
-                  class="additem"
-                  data-bs-toggle="modal"
-                  data-bs-target="#addItems"
-                  style="text-align: end"
-                  type="button"
-                  @click="passCatId(category.id, category.name)"
-                  >Add Items</label
+              <div>
+                <div
+                  class="d-flex justify-content-between align-items-center flex-md-row flex-column mb-3"
                 >
+                  <!-- <h2 style="visibility: hidden">{{ category.name }}</h2> -->
+                  <h2 style="flex: 1">{{ category.name }}</h2>
+                  <label
+                    class="additem"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addItems"
+                    style="text-align: end"
+                    type="button"
+                    @click="passCatId(category.id, category.name)"
+                    >Add Items</label
+                  >
+                </div>
+                <allItems />
               </div>
-              <allItems />
-              <div class="d-flex justify-content-between">
-                <label
-                  class="next-btn"
-                  data-bs-toggle="modal"
-                  data-bs-target="#CategoryDelete"
-                  @click="delete_cate(category.id, category.name)"
-                  >Delete</label
-                >
-                <label
-                  class="next-btn"
-                  data-bs-toggle="modal"
-                  data-bs-target="#CategoryUpdate"
-                  @click="
-                    update_cate(category.id, category.name, listOfImages[index])
-                  "
-                  >Update</label
-                >
-                <label
-                  v-if="index + 1 != listOfCategories.length"
-                  :for="`c${category.id}`"
-                  class="next-btn"
-                  @click="
-                    flip_next(listOfCategoriesLength[index + 1], category.id)
-                  "
-                  >NEXT</label
-                >
-                <label v-else class="next-btn">Last page</label>
+              <div>
+                <div class="d-flex justify-content-between">
+                  <label
+                    class="next-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#CategoryDelete"
+                    @click="delete_cate(category.id, category.name)"
+                    >Delete</label
+                  >
+                  <label
+                    class="next-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#CategoryUpdate"
+                    @click="
+                      update_cate(
+                        category.id,
+                        category.name,
+                        listOfImages[index]
+                      )
+                    "
+                    >Update</label
+                  >
+                  <label
+                    v-if="index + 1 != listOfCategories.length"
+                    :for="`c${category.id}`"
+                    class="next-btn"
+                    @click="
+                      flip_next(listOfCategoriesLength[index + 1], category.id)
+                    "
+                    >NEXT</label
+                  >
+                  <label v-else class="next-btn">Last page</label>
+                </div>
               </div>
             </div>
           </div>
@@ -564,6 +572,9 @@ p {
   background-color: #fafafa;
   box-sizing: border-box;
   padding: 13px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .back {
