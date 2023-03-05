@@ -599,7 +599,7 @@ p {
   bottom: 13px;
   right: 13px;
   cursor: pointer;
-  color: #fff;
+  color: #fff !important;
 }
 .scroll {
   overflow: hidden;
